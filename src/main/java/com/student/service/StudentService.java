@@ -1,7 +1,6 @@
 package com.student.service;
 
-import java.sql.SQLException;
-import com.student.db.DBConnector;
+import com.student.jdbc.DBConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +12,7 @@ public class StudentService {
         try {
             Connection con = DBConnector.getConnection();
             PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO student(username,password) VALUES (?,?)",
+                    "insert into student(username,password) VALUES (?,?)",
                     PreparedStatement.RETURN_GENERATED_KEYS
             );
             ps.setString(1, username);

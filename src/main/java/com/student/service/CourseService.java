@@ -1,5 +1,5 @@
 package com.student.service;
-import com.student.db.DBConnector;
+import com.student.jdbc.DBConnector;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
