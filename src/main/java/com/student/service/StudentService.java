@@ -1,52 +1,40 @@
 package com.student.service;
 
 import com.student.jdbc.DBConnector;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class StudentService {
-
     public static long register(String username, String password) {
-        long id = 0;
-        try {
-            Connection con = DBConnector.getConnection();
-            PreparedStatement ps = con.prepareStatement(
-                    "insert into student(username,password) VALUES (?,?)",
-                    PreparedStatement.RETURN_GENERATED_KEYS
-            );
+        String sql = "INSERT INTO student(username, password) VALUES (?,?)";
+        try (PreparedStatement ps = DBConnector.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, username);
             ps.setString(2, password);
             ps.executeUpdate();
 
             ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) id = rs.getLong(1);
-
-            System.out.println("student created");
+            if (rs.next()) {
+                System.out.println("student created");
+                return rs.getLong(1);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Student registration failed: " + e.getMessage());
         }
-        return id;
+        return 0;
     }
 
     public static long login(String username, String password) {
-        long id = 0;
-        try {
-            Connection con = DBConnector.getConnection();
-            PreparedStatement ps = con.prepareStatement(
-                    "SELECT id FROM student WHERE username=? AND password=?"
-            );
+        String sql = "SELECT id FROM student WHERE username=? AND password=?";
+        try (PreparedStatement ps = DBConnector.getConnection().prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
-
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                id = rs.getLong("id");
                 System.out.println("Student Login Successfully");
+                return rs.getLong("id");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Login failed: " + e.getMessage());
         }
-        return id;
+        return 0;
     }
 }
